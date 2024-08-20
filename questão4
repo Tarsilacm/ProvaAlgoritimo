@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+// Protótipo da função para calcular o número de moedas
+int calculate_coins(int cents, int coin_value);
+
+int main(void) {
+    int cents;
+
+    // Solicita ao usuário o valor do troco em centavos
+    do {
+        printf("Troco devido: ");
+        scanf("%d", &cents);
+    } while (cents < 0); // Continua pedindo até que o valor seja positivo
+
+    // Inicializa o número total de moedas
+    int total_coins = 0;
+
+    // Calcula o número de moedas de 25 centavos (quarters)
+    total_coins += calculate_coins(cents, 25);
+    // Subtrai o valor dos quarters do troco restante
+    cents %= 25;
+
+    // Calcula o número de moedas de 10 centavos (dimes)
+    total_coins += calculate_coins(cents, 10);
+    // Subtrai o valor dos dimes do troco restante
+    cents %= 10;
+
+    // Calcula o número de moedas de 5 centavos (nickels)
+    total_coins += calculate_coins(cents, 5);
+    // Subtrai o valor dos nickels do troco restante
+    cents %= 5;
+
+    // Calcula o número de moedas de 1 centavo (pennies)
+    total_coins += calculate_coins(cents, 1);
+
+    // Imprime o número total de moedas
+    printf("%d\n", total_coins);
+
+    return 0;
+}
+
+// Função para calcular o número de moedas de um determinado valor
+int calculate_coins(int cents, int coin_value) {
+    return cents / coin_value;
+}
