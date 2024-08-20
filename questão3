@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    char numero_cartao[17]; // Declara um array para armazenar o número do cartão (máximo de 16 dígitos + '\0')
+    printf("Numero: ");
+    scanf("%16s", numero_cartao); // Lê a entrada do número do cartão (até 16 caracteres)
+
+    int tam = strlen(numero_cartao); // Calcula o comprimento do número do cartão
+    
+    // Verifica se o comprimento do número do cartão é válido (13, 15 ou 16 dígitos)
+    if (tam != 13 && tam != 15 && tam != 16)
+    {
+        printf("INVALID\n"); // Se o comprimento não for válido, imprime "INVALID" e encerra
+        return 0;
+    }
+
+    int soma1 = 0, soma2 = 0; // Inicializa variáveis para armazenar as somas dos dígitos
+    for (int i = tam - 1; i >= 0; i--)
+    {
+        int digito = numero_cartao[i] - '0'; // Converte o caractere para o valor numérico correspondente
+
+        // Se o índice do dígito for par (contando do final para o início)
+        if ((tam - i) % 2 == 0)
+        {
+            digito *= 2; // Multiplica o dígito por 2
+            soma1 += digito / 10 + digito % 10; // Soma os dígitos do resultado 
+        }
+        else
+        {
+            soma2 += digito; // Soma os dígitos não multiplicados por 2
+        }
+    }
+
+    int total = soma1 + soma2; // Calcula o total das somas
+
+    // Verifica se o total é múltiplo de 10 (conforme o algoritmo de Luhn)
+    if (total % 10 != 0)
+    {
+        printf("INVALID\n"); // Se não for múltiplo de 10, imprime "INVALID"
+        return 0;
+    }
+
+    // Identifica o tipo do cartão com base no prefixo e comprimento
+    if ((numero_cartao[0] == '3' && (numero_cartao[1] == '4' || numero_cartao[1] == '7')) && tam == 15)
+    {
+        printf("AMEX\n"); // Cartão American Express (AMEX) tem prefixo 34 ou 37 e comprimento 15
+    }
+    else if (numero_cartao[0] == '5' && (numero_cartao[1] >= '1' && numero_cartao[1] <= '5') && tam == 16)
+    {
+        printf("MASTERCARD\n"); // Cartão MasterCard tem prefixo 51 a 55 e comprimento 16
+    }
+    else if (numero_cartao[0] == '4' && (tam == 13 || tam == 16))
+    {
+        printf("VISA\n"); // Cartão Visa começa com 4 e pode ter comprimento 13 ou 16
+    }
+    else
+    {
+        printf("INVALID\n"); // Se não corresponder a nenhum dos critérios, imprime "INVALID"
+    }
+
+    return 0; 
+}
