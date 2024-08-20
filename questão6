@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// Função para validar a chave
+int validate_key(char key[]);
+
+// Função para criptografar a mensagem
+void encrypt(char plaintext[], char key[]);
+
+int main()
+{
+    char key[27]; // Array para armazenar a chave de criptografia com 27 caracteres (26 + 1 para '\0')
+    char plaintext[100]; // Array para armazenar a mensagem a ser criptografada, com até 99 caracteres + '\0'
+
+    // Solicita a chave do usuário
+    printf("Digite a chave (26 caracteres únicos): ");
+    fgets(key, sizeof(key), stdin); // Lê a chave do usuário, incluindo o caractere de nova linha
+    key[strcspn(key, "\n")] = '\0'; // Remove o caractere de nova linha da string
+
+    // Valida a chave
+    if (!validate_key(key))
+    {
+        printf("Chave inválida. A chave deve conter 26 caracteres únicos.\n");
+        return 1; // Sai do programa com código de erro 1
+    }
+
+    // Solicita a mensagem do usuário
+    printf("Digite a mensagem: ");
+    fgets(plaintext, sizeof(plaintext), stdin); // Lê a mensagem do usuário, incluindo o caractere de nova linha
+    plaintext[strcspn(plaintext, "\n")] = '\0'; // Remove o caractere de nova linha da string
+
+    // Criptografa a mensagem
+    encrypt(plaintext, key);
+
+    return 0; // Sai do programa com código de sucesso 0
+}
+
+// Função para validar a chave
+int validate_key(char key[])
+{
+    // Verifica se a chave tem exatamente 26 caracteres
+    if (strlen(key) != 26)
+    {
+        return 0; // Retorna 0 se a chave não tiver 26 caracteres
+    }
+
+    // Array para rastrear a presença de cada letra no alfabeto
+    int letters[26] = {0}; // Inicializa o array com zeros
+
+    // Itera sobre cada caractere da chave
+    for (int i = 0; i < 26; i++)
+    {
+        // Verifica se o caractere é uma letra
+        if (!isalpha(key[i]))
+        {
+            return 0; // Retorna 0 se algum caractere não for uma letra
+        }
+        // Converte o caractere para maiúsculo e calcula o índice correspondente no array
+        int index = toupper(key[i]) - 'A';
+        // Verifica se a letra já foi encontrada antes
+        if (letters[index] > 0)
+        {
+            return 0; // Retorna 0 se a letra já estiver presente, indicando duplicidade
+        }
+        letters[index]++; // Marca a presença da letra
+    }
+    return 1; // Retorna 1 se a chave for válida
+}
+
+// Função para criptografar a mensagem
+void encrypt(char plaintext[], char key[])
+{
+    printf("ciphertext: ");
+    // Itera sobre cada caractere da mensagem
+    for (int i = 0, n = strlen(plaintext); i < n; i++)
+    {
+        // Verifica se o caractere é uma letra
+        if (isalpha(plaintext[i]))
+        {
+            // Calcula o índice na chave usando a letra da mensagem
+            int index = toupper(plaintext[i]) - 'A';
+            // Escolhe o caractere criptografado baseado na chave e preserva o caso da letra original
+            char cipher_char = isupper(plaintext[i]) ? toupper(key[index]) : tolower(key[index]);
+            // Imprime o caractere criptografado
+            printf("%c", cipher_char);
+        }
+        else
+        {
+            // Se não for uma letra, imprime o caractere original
+            printf("%c", plaintext[i]);
+        }
+    }
+    printf("\n"); // Nova linha após imprimir toda a mensagem criptografada
+}
